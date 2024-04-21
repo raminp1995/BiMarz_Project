@@ -14,8 +14,5 @@ public class PersonDto extends BaseDto
 {
     private String firstName;
     private String lastName;
-//    private String username;
-//    private String password;
     private String phone;
-    private Role rule;
 }
