@@ -22,10 +22,17 @@ public class UserEntity extends PersonEntity
 
     private String username;
     private String password;
-    private Boolean addUser;
-    private Boolean editUser;
-    private Boolean removeUser;
-    private Boolean addProduct;
-    private Boolean editeProduct;
-    private Boolean removeProduct;
+
+    private Boolean addAdmin = false;
+    private Boolean editAdmin = false;
+    private Boolean removeAdmin = false;
+    private Boolean addUser = false;
+    private Boolean editUser = false;
+    private Boolean removeUser = false;
+    private Boolean addProduct = false;
+    private Boolean editProduct = false;
+    private Boolean removeProduct = false;
+    private Boolean addOrder = false;
+    private Boolean editOrder = false;
+    private Boolean removeOrder = false;
 }
