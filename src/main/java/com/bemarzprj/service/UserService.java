@@ -44,7 +44,7 @@ public class UserService extends BaseService<UserEntity, UserDto>
     {
         UserDto userDto = setDefaultAbilities(dto);
 
-        return super.update(userDto);
+        return super.create(userDto);
     }
 
     @Override

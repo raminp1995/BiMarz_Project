@@ -13,4 +13,5 @@ public class ProductDto extends BaseDto
     private String color;
     private Integer price;
     private Integer quantity;
+    private Integer count;
 }

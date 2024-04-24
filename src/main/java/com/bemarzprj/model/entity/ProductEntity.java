@@ -19,4 +19,5 @@ public class ProductEntity extends BaseEntity
     private String color;
     private Integer price;
     private Integer quantity;
+    private Integer count;
 }

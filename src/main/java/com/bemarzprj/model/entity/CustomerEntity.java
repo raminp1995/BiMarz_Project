@@ -6,7 +6,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.List;
+
+
 
 @Entity
 @Setter
@@ -25,12 +28,14 @@ public class CustomerEntity extends PersonEntity
     @Column
     private String pageID;
 
-    @OneToMany(targetEntity = ProductEntity.class, cascade = CascadeType.ALL)
-    private List<ProductEntity> products;
+//    @OneToMany(mappedBy="customer")
+//    private List<ProductEntity> products;
 
-    @OneToOne(targetEntity = DepositInfoEntity.class, cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "depositInfo_id", referencedColumnName = "id")
     private DepositInfoEntity depositInfo;
 
-    @OneToOne(targetEntity = DepositInfoEntity.class, cascade = CascadeType.ALL)
-    private ShippingInfo shippingInfo;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "order_id", referencedColumnName = "id")
+    private OrderEntity order;
 }
