@@ -17,9 +17,10 @@ public interface IUserRepository extends IBaseRepository<UserEntity>
     }
 
     Optional<UserEntity> findByUsername(String username);
-    Boolean existsByUsername(String username);
+
+    boolean existsByUsername(String username);
+//    Boolean findUserAbilityBy(String ability);
 
     //Boolean checkUserRole(String username);
-
 
 }

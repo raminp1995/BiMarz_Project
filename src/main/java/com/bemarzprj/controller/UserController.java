@@ -1,5 +1,7 @@
 package com.bemarzprj.controller;
 
+import com.bemarzprj.exception.ExceptionMassages;
+import com.bemarzprj.model.dto.ExceptionMassagesDto;
 import com.bemarzprj.model.dto.UserDto;
 import com.bemarzprj.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -18,35 +20,35 @@ public class UserController extends BaseController<UserService, UserDto>
 
     @GetMapping("/get/{id}")
     @Override
-    ResponseEntity<UserDto> getById(@PathVariable Long id)
+    ResponseEntity<UserDto> getById(@PathVariable Long id) throws ExceptionMassages
     {
         return super.getById(id);
     }
 
     @GetMapping("/getAll")
     @Override
-    ResponseEntity<List<UserDto>> getAll()
+    ResponseEntity<List<UserDto>> getAll() throws ExceptionMassages
     {
         return super.getAll();
     }
 
     @PostMapping("/create")
     @Override
-    ResponseEntity<UserDto> create(@RequestBody UserDto dto)
+    ResponseEntity<UserDto> create(@RequestBody UserDto dto) throws ExceptionMassages
     {
         return super.create(dto);
     }
 
     @PutMapping("/update")
     @Override
-    ResponseEntity<UserDto> update(@RequestBody UserDto dto)
+    ResponseEntity<UserDto> update(@RequestBody UserDto dto) throws ExceptionMassages
     {
         return super.update(dto);
     }
 
     @DeleteMapping("/delete/{id}")
     @Override
-    void delete(@PathVariable Long id)
+    void delete(@PathVariable Long id) throws ExceptionMassages
     {
         super.delete(id);
     }

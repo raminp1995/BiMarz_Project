@@ -1,8 +1,8 @@
 package com.bemarzprj.controller;
 
+import com.bemarzprj.exception.ExceptionMassages;
 import com.bemarzprj.model.dto.ProductDto;
 import com.bemarzprj.service.IBaseService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +19,7 @@ public class ProductController extends BaseController<IBaseService<ProductDto>, 
 
     @GetMapping("/get/{id}")
     @Override
-    ResponseEntity<ProductDto> getById(@PathVariable Long id)
+    ResponseEntity<ProductDto> getById(@PathVariable Long id) throws ExceptionMassages
     {
         return super.getById(id);
     }
@@ -33,28 +33,28 @@ public class ProductController extends BaseController<IBaseService<ProductDto>, 
 
     @GetMapping("/getAll")
     @Override
-    ResponseEntity<List<ProductDto>> getAll()
+    ResponseEntity<List<ProductDto>> getAll() throws ExceptionMassages
     {
         return super.getAll();
     }
 
     @PostMapping("/create")
     @Override
-    ResponseEntity<ProductDto> create(@RequestBody ProductDto dto)
+    ResponseEntity<ProductDto> create(@RequestBody ProductDto dto) throws ExceptionMassages
     {
         return super.create(dto);
     }
 
-    @PutMapping("/update")
+    @PutMapping("/edit")
     @Override
-    ResponseEntity<ProductDto> update(@RequestBody ProductDto dto)
+    ResponseEntity<ProductDto> update(@RequestBody ProductDto dto) throws ExceptionMassages
     {
         return super.update(dto);
     }
 
     @DeleteMapping("/delete/{id}")
     @Override
-    void delete(@PathVariable Long id)
+    void delete(@PathVariable Long id) throws ExceptionMassages
     {
         super.delete(id);
     }

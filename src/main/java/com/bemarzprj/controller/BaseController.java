@@ -1,6 +1,8 @@
 package com.bemarzprj.controller;
 
+import com.bemarzprj.exception.ExceptionMassages;
 import com.bemarzprj.model.dto.BaseDto;
+import com.bemarzprj.model.dto.ExceptionMassagesDto;
 import com.bemarzprj.service.IBaseService;
 import org.springframework.http.ResponseEntity;
 
@@ -15,7 +17,7 @@ public abstract class BaseController<S extends IBaseService<Dto>, Dto extends Ba
         this.service = service;
     }
 
-    ResponseEntity<Dto> getById(Long id)
+    ResponseEntity<Dto> getById(Long id) throws ExceptionMassages
     {
         return service.getById(id);
     }
@@ -25,22 +27,22 @@ public abstract class BaseController<S extends IBaseService<Dto>, Dto extends Ba
         return service.getByModel(model);
     }
 
-    ResponseEntity<List<Dto>> getAll()
+    ResponseEntity<List<Dto>> getAll() throws ExceptionMassages
     {
         return service.getAll();
     }
 
-    ResponseEntity<Dto> create(Dto dto)
+    ResponseEntity<Dto> create(Dto dto) throws ExceptionMassages
     {
         return service.create(dto);
     }
 
-    ResponseEntity<Dto> update(Dto dto)
+    ResponseEntity<Dto> update(Dto dto) throws ExceptionMassages
     {
         return service.update(dto);
     }
 
-    void delete(Long id)
+    void delete(Long id) throws ExceptionMassages
     {
         service.delete(id);
     }
