@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.LastModifiedDate;
+
+import java.time.LocalDate;
 
 
 @Setter
@@ -15,4 +18,10 @@ public class BaseDto
 {
     @JsonIgnore
     private Long id;
+
+    private LocalDate created_at;
+
+    private LocalDate updated_at;
+
+    private Boolean deleted = false;
 }

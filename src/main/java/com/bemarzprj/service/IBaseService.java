@@ -18,7 +18,7 @@ public interface IBaseService<Dto extends BaseDto>
 
     ResponseEntity<Dto> update(Dto dto) throws ExceptionMassages;
 
-    ResponseEntity<Boolean> delete(Long id) throws ExceptionMassages;
+    ResponseEntity<Void> delete(Long id) throws ExceptionMassages;
 
 //    Boolean checkPermission(String role, String ability);
 }

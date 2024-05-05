@@ -23,7 +23,7 @@ public class OrderDto extends BaseDto
     private CustomerEntity customer;
     private List<ProductEntity> products;
     private String postType;
-    private Long submitter_id;
+    private UserDto submitUser;
     private String printCode;
     private LocalDate dateOfPrint;
     private Boolean isPrinted;

@@ -1,6 +1,9 @@
 package com.bemarzprj.model.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,6 +19,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class DepositInfoEntity extends BaseEntity
 {
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "order_id", referencedColumnName = "id")
+    private OrderEntity orderEntity;
     private LocalDate date;
     private LocalDateTime time;
     private Long price;

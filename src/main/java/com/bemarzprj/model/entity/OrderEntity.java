@@ -6,6 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Immutable;
+import org.hibernate.annotations.Mutability;
+import org.springframework.data.jpa.repository.Lock;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -25,9 +28,14 @@ public class OrderEntity extends BaseEntity
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<ProductEntity> products;
 
+    @OneToOne(mappedBy = "order_entity")
+    private DepositInfoEntity depositInfoEntity;
+
     private String postType;
 
-    private Long submitter_id;
+    @ManyToOne(targetEntity = UserEntity.class, cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    @Immutable
+    private UserEntity submitUser;
 
     private String printCode;
 

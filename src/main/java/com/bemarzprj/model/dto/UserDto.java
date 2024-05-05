@@ -20,25 +20,7 @@ import java.util.Map;
 public class UserDto extends PersonDto
 {
     private List<Role> roles = new ArrayList<>();
-
     private String username;
     private String password;
-
     private Map<String, Boolean> userAbilities = new HashMap<>();
-
-//    private Boolean addAdmin = false;
-//    private Boolean editAdmin = false;
-//    private Boolean removeAdmin = false;
-//    private Boolean addUser = false;
-//    private Boolean editUser = false;
-//    private Boolean removeUser = false;
-//    private Boolean addCustomer = false;
-//    private Boolean editCustomer = false;
-//    private Boolean removeCustomer = false;
-//    private Boolean addProduct = false;
-//    private Boolean editProduct = false;
-//    private Boolean removeProduct = false;
-//    private Boolean addOrder = false;
-//    private Boolean editOrder = false;
-//    private Boolean removeOrder = false;
 }

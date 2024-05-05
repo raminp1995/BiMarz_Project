@@ -16,16 +16,18 @@ import java.util.List;
 @Service
 public class ProductService extends BaseService<ProductEntity, ProductDto>
 {
+    private final UserService userService;
 
-    public ProductService(IBaseRepository<ProductEntity> baseRepository, IUserRepository userRepository, IBaseMapper<ProductEntity, ProductDto> baseMapper)
+    public ProductService(IBaseRepository<ProductEntity> baseRepository, IBaseMapper<ProductEntity, ProductDto> baseMapper, UserService userService)
     {
-        super(baseRepository, userRepository, baseMapper);
+        super(baseRepository, baseMapper);
+        this.userService = userService;
     }
 
     @Override
     public ResponseEntity<ProductDto> getById(Long id) throws ExceptionMassages
     {
-        if (super.checkPermission(Abilities.GET_PRODUCT))
+        if (userService.checkPermission(Abilities.GET_PRODUCT))
         {
             return super.getById(id);
         }
@@ -44,7 +46,7 @@ public class ProductService extends BaseService<ProductEntity, ProductDto>
     @Override
     public ResponseEntity<List<ProductDto>> getAll() throws ExceptionMassages
     {
-        if (super.checkPermission(Abilities.GET_PRODUCT))
+        if (userService.checkPermission(Abilities.GET_PRODUCT))
         {
             return super.getAll();
         }
@@ -57,7 +59,7 @@ public class ProductService extends BaseService<ProductEntity, ProductDto>
     @Override
     public ResponseEntity<ProductDto> create(ProductDto dto) throws ExceptionMassages
     {
-        if (super.checkPermission(Abilities.ADD_PRODUCT))
+        if (userService.checkPermission(Abilities.ADD_PRODUCT))
         {
             return super.create(dto);
         }
@@ -70,7 +72,7 @@ public class ProductService extends BaseService<ProductEntity, ProductDto>
     @Override
     public ResponseEntity<ProductDto> update(ProductDto dto) throws ExceptionMassages
     {
-        if (super.checkPermission(Abilities.EDIT_PRODUCT))
+        if (userService.checkPermission(Abilities.EDIT_PRODUCT))
         {
             return super.update(dto);
         }
@@ -81,12 +83,12 @@ public class ProductService extends BaseService<ProductEntity, ProductDto>
     }
 
     @Override
-    public ResponseEntity<Boolean> delete(Long id) throws ExceptionMassages
+    public ResponseEntity<Void> delete(Long id) throws ExceptionMassages
     {
-        if (super.checkPermission(Abilities.REMOVE_PRODUCT))
+        if (userService.checkPermission(Abilities.REMOVE_PRODUCT))
         {
             super.delete(id);
-            return new ResponseEntity<>(true, HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.OK);
         }
         else
         {

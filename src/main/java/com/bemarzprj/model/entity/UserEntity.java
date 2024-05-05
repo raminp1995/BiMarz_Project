@@ -28,7 +28,10 @@ public class UserEntity extends PersonEntity
     @CollectionTable(name="ability_isAble", joinColumns=@JoinColumn(name="userAbilities_id"))
     private Map<String, Boolean> userAbilities = new HashMap<>();
 
+    @Column(unique = true, nullable = false)
     private String username;
+
+    @Column(nullable = false)
     private String password;
 
     public UserEntity()
@@ -54,4 +57,5 @@ public class UserEntity extends PersonEntity
         userAbilities.put("REMOVE_ORDER", false);
         userAbilities.put("GET_ORDER", false);
     }
+
 }

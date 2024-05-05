@@ -12,8 +12,11 @@ import com.bemarzprj.repository.IUserRepository;
 import com.bemarzprj.security.SecurityConstants;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -21,13 +24,11 @@ import java.util.NoSuchElementException;
 public class BaseService<E extends BaseEntity, Dto extends BaseDto> implements IBaseService<Dto>
 {
     private final IBaseRepository<E> baseRepository;
-    private final IUserRepository userRepository;
     private final IBaseMapper<E, Dto> baseMapper;
 
-    public BaseService(IBaseRepository<E> baseRepository, IUserRepository userRepository, IBaseMapper<E, Dto> baseMapper)
+    public BaseService(IBaseRepository<E> baseRepository, IBaseMapper<E, Dto> baseMapper)
     {
         this.baseRepository = baseRepository;
-        this.userRepository = userRepository;
         this.baseMapper = baseMapper;
     }
 
@@ -37,7 +38,15 @@ public class BaseService<E extends BaseEntity, Dto extends BaseDto> implements I
     {
         Dto dto = baseMapper.entityToDto(baseRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("No Data Founded!")));
-        return new ResponseEntity<>(dto, HttpStatus.OK);
+
+        if (dto.getDeleted())
+        {
+            throw new ExceptionMassages("No data founded!");
+        }
+        else
+        {
+            return new ResponseEntity<>(dto, HttpStatus.OK);
+        }
     }
 
     @Override
@@ -50,46 +59,43 @@ public class BaseService<E extends BaseEntity, Dto extends BaseDto> implements I
     @Override
     public ResponseEntity<List<Dto>> getAll() throws ExceptionMassages
     {
-        List<Dto> dto =  baseRepository.findAll().stream().map(baseMapper::entityToDto).toList();
+        List<Dto> dto =  baseRepository.findAll().stream().filter(i -> !i.getDeleted()).map(baseMapper::entityToDto).toList();
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<Dto> create(Dto dto) throws ExceptionMassages
     {
+        dto.setCreated_at(LocalDate.now());
         Dto resultDto = baseMapper.entityToDto(baseRepository.save(baseMapper.dtoToEntity(dto)));
-        return new ResponseEntity<>(dto, HttpStatus.OK);
+        return new ResponseEntity<>(resultDto, HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<Dto> update(Dto dto) throws ExceptionMassages
     {
+        dto.setUpdated_at(LocalDate.now());
         Dto resultDto = baseMapper.entityToDto(baseRepository.save(baseMapper.dtoToEntity(dto)));
-        return new ResponseEntity<>(dto, HttpStatus.OK);
+        return new ResponseEntity<>(resultDto, HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<Boolean> delete(Long id) throws ExceptionMassages
+    public ResponseEntity<Void> delete(Long id) throws ExceptionMassages
     {
-
-        return null;
-    }
-
-
-    /*
-        This method checks the Permission of a user
-     */
-    public Boolean checkPermission(String ability)
-    {
-        String username = SecurityConstants.getAuth().getName();
-        UserEntity user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User Not Found!"));
-
-        Role roles = user.getRoles().getFirst();
-        if (roles.getName().equalsIgnoreCase(RoleType.ADMIN) || roles.getName().equalsIgnoreCase(RoleType.USER))
+        E entity = baseRepository.findById(id).orElseThrow(() -> new NoSuchElementException("No Data Founded!"));
+        if (entity.getDeleted())
         {
-            return user.getUserAbilities().get(ability);
+            System.out.println("No information");
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return false;
+        else
+        {
+            entity.setDeleted(true);
+            baseRepository.save(entity);
+            System.out.println("Your information successfully deleted!");
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
     }
+
+
 }
