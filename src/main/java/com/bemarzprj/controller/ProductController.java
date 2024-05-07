@@ -26,7 +26,7 @@ public class ProductController extends BaseController<IBaseService<ProductDto>, 
 
     @GetMapping("/getByModel/{model}")
     @Override
-    ResponseEntity<ProductDto> getByModel(@PathVariable String model)
+    ResponseEntity<ProductDto> getByModel(@PathVariable String model) throws ExceptionMassages
     {
         return super.getByModel(model);
     }

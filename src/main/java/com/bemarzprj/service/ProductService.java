@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class ProductService extends BaseService<ProductEntity, ProductDto>
@@ -38,9 +39,17 @@ public class ProductService extends BaseService<ProductEntity, ProductDto>
     }
 
     @Override
-    public ResponseEntity<ProductDto> getByModel(String model)
+    public ResponseEntity<ProductDto> getByModel(String model) throws ExceptionMassages
     {
-        return super.getByModel(model);
+        if (userService.checkPermission(Abilities.GET_PRODUCT))
+        {
+            return super.getByModel(model);
+        }
+        else
+        {
+            throw new ExceptionMassages("You can not operate this action");
+        }
+
     }
 
     @Override
@@ -61,6 +70,12 @@ public class ProductService extends BaseService<ProductEntity, ProductDto>
     {
         if (userService.checkPermission(Abilities.ADD_PRODUCT))
         {
+            ProductDto productDto = super.getByModel(dto.getModel()).getBody();
+            assert productDto != null;
+            if (productDto.getModel().equalsIgnoreCase(dto.getModel()) && !productDto.getDeleted())
+            {
+                throw new ExceptionMassages("Duplicate item!");
+            }
             return super.create(dto);
         }
         else
@@ -74,6 +89,10 @@ public class ProductService extends BaseService<ProductEntity, ProductDto>
     {
         if (userService.checkPermission(Abilities.EDIT_PRODUCT))
         {
+            if (Objects.requireNonNull(super.getByModel(dto.getModel()).getBody()).getDeleted())
+            {
+                throw new ExceptionMassages("Item not found!");
+            }
             return super.update(dto);
         }
         else

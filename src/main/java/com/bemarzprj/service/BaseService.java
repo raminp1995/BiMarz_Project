@@ -10,6 +10,7 @@ import com.bemarzprj.model.entity.UserEntity;
 import com.bemarzprj.repository.IBaseRepository;
 import com.bemarzprj.repository.IUserRepository;
 import com.bemarzprj.security.SecurityConstants;
+import com.sun.jdi.BooleanValue;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
@@ -38,19 +39,11 @@ public class BaseService<E extends BaseEntity, Dto extends BaseDto> implements I
     {
         Dto dto = baseMapper.entityToDto(baseRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("No Data Founded!")));
-
-        if (dto.getDeleted())
-        {
-            throw new ExceptionMassages("No data founded!");
-        }
-        else
-        {
-            return new ResponseEntity<>(dto, HttpStatus.OK);
-        }
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<Dto> getByModel(String model)
+    public ResponseEntity<Dto> getByModel(String model) throws ExceptionMassages
     {
         Dto dto = baseMapper.entityToDto(baseRepository.findByModel(model));
         return new ResponseEntity<>(dto, HttpStatus.OK);
@@ -96,6 +89,4 @@ public class BaseService<E extends BaseEntity, Dto extends BaseDto> implements I
             return new ResponseEntity<>(HttpStatus.OK);
         }
     }
-
-
 }

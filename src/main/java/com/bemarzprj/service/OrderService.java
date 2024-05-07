@@ -46,7 +46,7 @@ public class OrderService extends BaseService<OrderEntity, OrderDto>
     }
 
     @Override
-    public ResponseEntity<OrderDto> getByModel(String model)
+    public ResponseEntity<OrderDto> getByModel(String model) throws ExceptionMassages
     {
         return super.getByModel(model);
     }

@@ -32,7 +32,7 @@ public class AuthController
 {
     private final AuthenticationManager authenticationManager;
 
-//    private final IUserRepository userRepository;
+    private final IUserRepository userRepository;
 
     private final UserService userService;
     private final IUserMapper userMapper;
@@ -41,12 +41,12 @@ public class AuthController
     private final JWTGenerator jwtGenerator;
 
     @Autowired
-    public AuthController(AuthenticationManager authenticationManager, UserService userService, IUserMapper userMapper, /*IUserRepository userRepository,*/ IRoleRepository roleRepository, PasswordEncoder passwordEncoder, JWTGenerator jwtGenerator)
+    public AuthController(AuthenticationManager authenticationManager, UserService userService, IUserMapper userMapper, IUserRepository userRepository, IRoleRepository roleRepository, PasswordEncoder passwordEncoder, JWTGenerator jwtGenerator)
     {
         this.authenticationManager = authenticationManager;
         this.userService = userService;
         this.userMapper = userMapper;
-//        this.userRepository = userRepository;
+        this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtGenerator = jwtGenerator;
@@ -55,7 +55,7 @@ public class AuthController
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegisterDto registerDto) throws ExceptionMassages
     {
-        if(userService.existsByUsername(registerDto.getUsername()))
+        if(userRepository.existsByUsername(registerDto.getUsername()))
         {
             return new ResponseEntity<>("Username is taken!!", HttpStatus.BAD_REQUEST);
         }
@@ -69,7 +69,7 @@ public class AuthController
         UserDto userDto = userService.setAdminDefaultAbilities(userMapper.entityToDto(user));
         userService.create(userDto);
 
-        return new ResponseEntity<>("User Registration was Successful", HttpStatus.OK);
+        return new ResponseEntity<>("User Registration was Successfully", HttpStatus.OK);
     }
 
     @PostMapping("/login")

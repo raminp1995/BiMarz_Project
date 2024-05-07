@@ -28,7 +28,7 @@ public class OrderController extends BaseController<OrderService, OrderDto>
     }
 
     @Override
-    ResponseEntity<OrderDto> getByModel(String model)
+    ResponseEntity<OrderDto> getByModel(String model) throws ExceptionMassages
     {
         return super.getByModel(model);
     }

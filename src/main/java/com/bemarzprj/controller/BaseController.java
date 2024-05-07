@@ -22,7 +22,7 @@ public abstract class BaseController<S extends IBaseService<Dto>, Dto extends Ba
         return service.getById(id);
     }
 
-    ResponseEntity<Dto> getByModel(String model)
+    ResponseEntity<Dto> getByModel(String model) throws ExceptionMassages
     {
         return service.getByModel(model);
     }

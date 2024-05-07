@@ -17,6 +17,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.beans.Transient;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,8 +50,9 @@ public class UserService extends BaseService<UserEntity, UserDto>
         }
     }
 
+    @Transient
     @Override
-    public ResponseEntity<UserDto> getByModel(String model)
+    public ResponseEntity<UserDto> getByModel(String model) throws ExceptionMassages
     {
         return super.getByModel(model);
     }
@@ -83,7 +85,7 @@ public class UserService extends BaseService<UserEntity, UserDto>
             {
                 user = setUserDefaultAbilities(dto);
             }
-        dto.setPassword(passwordEncoder.encode(dto.getPassword()));
+            dto.setPassword(passwordEncoder.encode(dto.getPassword()));
             return super.create(user);
         }
         else
@@ -95,9 +97,20 @@ public class UserService extends BaseService<UserEntity, UserDto>
     @Override
     public ResponseEntity<UserDto> update(UserDto dto) throws ExceptionMassages
     {
+        UserDto user = new UserDto();
+
         if (checkPermission(Abilities.EDIT_USER))
         {
-            return super.update(dto);
+            if (dto.getRoles().getFirst().getName().equals(RoleType.ADMIN))
+            {
+                user = setAdminDefaultAbilities(dto);
+            }
+            else if (dto.getRoles().getFirst().getName().equals(RoleType.USER))
+            {
+                user = setUserDefaultAbilities(dto);
+            }
+            dto.setPassword(passwordEncoder.encode(dto.getPassword()));
+            return super.create(user);
         }
         else
         {
@@ -134,7 +147,7 @@ public class UserService extends BaseService<UserEntity, UserDto>
     public UserDto setAdminDefaultAbilities(UserDto dto)
     {
         Map<String, Boolean> userAbilities = new HashMap<>();
-        userAbilities.put("ADD_ADMIN",true);
+//        userAbilities.put("ADD_ADMIN",true);
         userAbilities.put("EDIT_ADMIN", true);
         userAbilities.put("REMOVE_ADMIN", true);
         userAbilities.put("GET_ADMIN", true);
@@ -185,7 +198,9 @@ public class UserService extends BaseService<UserEntity, UserDto>
                 .orElseThrow(() -> new UsernameNotFoundException("User Not Found!"));
 
         Role roles = user.getRoles().getFirst();
-        if (roles.getName().equalsIgnoreCase(RoleType.ADMIN) || roles.getName().equalsIgnoreCase(RoleType.USER))
+        if (roles.getName().equalsIgnoreCase(RoleType.OWNER)
+                || roles.getName().equalsIgnoreCase(RoleType.ADMIN)
+                || roles.getName().equalsIgnoreCase(RoleType.USER))
         {
             return user.getUserAbilities().get(ability);
         }
@@ -194,5 +209,6 @@ public class UserService extends BaseService<UserEntity, UserDto>
 
     public boolean existsByUsername(String username)
     {
+        return userRepository.existsByUsername(username);
     }
 }
