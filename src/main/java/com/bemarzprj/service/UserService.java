@@ -4,6 +4,7 @@ import com.bemarzprj.constants.Abilities;
 import com.bemarzprj.constants.RoleType;
 import com.bemarzprj.exception.ExceptionMassages;
 import com.bemarzprj.mapper.IBaseMapper;
+import com.bemarzprj.mapper.IUserMapper;
 import com.bemarzprj.model.dto.UserDto;
 import com.bemarzprj.model.entity.Role;
 import com.bemarzprj.model.entity.UserEntity;
@@ -19,17 +20,20 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 @Service
 public class UserService extends BaseService<UserEntity, UserDto>
 {
     private final IUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    public UserService(IBaseRepository<UserEntity> baseRepository, IBaseMapper<UserEntity, UserDto> baseMapper, IUserRepository userRepository, PasswordEncoder passwordEncoder)
+    private final IUserMapper userMapper;
+    public UserService(IBaseRepository<UserEntity> baseRepository, IBaseMapper<UserEntity, UserDto> baseMapper, IUserRepository userRepository, PasswordEncoder passwordEncoder, IUserMapper userMapper)
     {
         super(baseRepository, baseMapper);
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.userMapper = userMapper;
     }
 
     @Override
@@ -115,8 +119,19 @@ public class UserService extends BaseService<UserEntity, UserDto>
         }
     }
 
+    public UserEntity findByUsername(String username)
+    {
+        return userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("User not Found!"));
 
-    private UserDto setAdminDefaultAbilities(UserDto dto)
+    }
+
+//    public UserDto findByUsername(UserDto user)
+//    {
+//        return userMapper.entityToDto(this.findByUsername(user.getUsername()));
+//    }
+
+
+    public UserDto setAdminDefaultAbilities(UserDto dto)
     {
         Map<String, Boolean> userAbilities = new HashMap<>();
         userAbilities.put("ADD_ADMIN",true);
@@ -175,5 +190,9 @@ public class UserService extends BaseService<UserEntity, UserDto>
             return user.getUserAbilities().get(ability);
         }
         return false;
+    }
+
+    public boolean existsByUsername(String username)
+    {
     }
 }

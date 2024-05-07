@@ -28,7 +28,7 @@ public class OrderEntity extends BaseEntity
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<ProductEntity> products;
 
-    @OneToOne(mappedBy = "order_entity")
+    @OneToOne(targetEntity = DepositInfoEntity.class, mappedBy = "orderEntity")
     private DepositInfoEntity depositInfoEntity;
 
     private String postType;
