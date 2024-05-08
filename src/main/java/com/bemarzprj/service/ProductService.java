@@ -3,9 +3,11 @@ package com.bemarzprj.service;
 import com.bemarzprj.constants.Abilities;
 import com.bemarzprj.exception.ExceptionMassages;
 import com.bemarzprj.mapper.IBaseMapper;
+import com.bemarzprj.mapper.IProductMapper;
 import com.bemarzprj.model.dto.ProductDto;
 import com.bemarzprj.model.entity.ProductEntity;
 import com.bemarzprj.repository.IBaseRepository;
+import com.bemarzprj.repository.IProductRepository;
 import com.bemarzprj.repository.IUserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +21,15 @@ public class ProductService extends BaseService<ProductEntity, ProductDto>
 {
     private final UserService userService;
 
-    public ProductService(IBaseRepository<ProductEntity> baseRepository, IBaseMapper<ProductEntity, ProductDto> baseMapper, UserService userService)
+    private final IProductRepository productRepository;
+    private final IProductMapper productMapper;
+
+    public ProductService(IBaseRepository<ProductEntity> baseRepository, IBaseMapper<ProductEntity, ProductDto> baseMapper, UserService userService, IProductRepository productRepository, IProductMapper productMapper)
     {
         super(baseRepository, baseMapper);
         this.userService = userService;
+        this.productRepository = productRepository;
+        this.productMapper = productMapper;
     }
 
     @Override
@@ -38,12 +45,17 @@ public class ProductService extends BaseService<ProductEntity, ProductDto>
         }
     }
 
-    @Override
-    public ResponseEntity<ProductDto> getByModel(String model) throws ExceptionMassages
+
+    public ResponseEntity<ProductDto> findByModel(String model) throws ExceptionMassages
     {
         if (userService.checkPermission(Abilities.GET_PRODUCT))
         {
-            return super.getByModel(model);
+            ProductDto productDto = productMapper.entityToDto(productRepository.getByModel(model).stream().filter(i -> !i.getDeleted()).toList().getFirst());
+            if (productDto == null)
+            {
+                throw new ExceptionMassages("No item found!");
+            }
+            return new ResponseEntity<>(productDto, HttpStatus.OK);
         }
         else
         {
@@ -70,11 +82,13 @@ public class ProductService extends BaseService<ProductEntity, ProductDto>
     {
         if (userService.checkPermission(Abilities.ADD_PRODUCT))
         {
-            ProductDto productDto = super.getByModel(dto.getModel()).getBody();
-            assert productDto != null;
-            if (productDto.getModel().equalsIgnoreCase(dto.getModel()) && !productDto.getDeleted())
+            ProductDto productDto = findByModel(dto.getModel()).getBody();
+            if (productDto != null)
             {
-                throw new ExceptionMassages("Duplicate item!");
+                if (productDto.getModel().equalsIgnoreCase(dto.getModel()) && !productDto.getDeleted())
+                {
+                    throw new ExceptionMassages("Duplicate item!");
+                }
             }
             return super.create(dto);
         }
@@ -89,16 +103,19 @@ public class ProductService extends BaseService<ProductEntity, ProductDto>
     {
         if (userService.checkPermission(Abilities.EDIT_PRODUCT))
         {
-            if (Objects.requireNonNull(super.getByModel(dto.getModel()).getBody()).getDeleted())
+            ProductDto productDto = findByModel(dto.getModel()).getBody();
+            assert productDto != null;
+            if (productDto.getModel().equalsIgnoreCase(dto.getModel()))
             {
-                throw new ExceptionMassages("Item not found!");
+                dto.setId(productDto.getId());
+                return super.update(dto);
             }
-            return super.update(dto);
         }
         else
         {
             throw new ExceptionMassages("You can not operate this action");
         }
+        return null;
     }
 
     @Override

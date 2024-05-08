@@ -10,8 +10,6 @@ public interface IBaseService<Dto extends BaseDto>
 {
     ResponseEntity<Dto> getById(Long id) throws ExceptionMassages;
 
-    ResponseEntity<Dto> getByModel(String model) throws ExceptionMassages;
-
     ResponseEntity<List<Dto>> getAll() throws ExceptionMassages;
 
     ResponseEntity<Dto> create(Dto dto) throws ExceptionMassages;

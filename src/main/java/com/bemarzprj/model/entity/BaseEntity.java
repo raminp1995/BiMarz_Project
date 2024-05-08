@@ -10,6 +10,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,9 +24,9 @@ public class BaseEntity
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;
     @CreatedDate
-    protected LocalDate created_at;
+    protected LocalDateTime created_at;
     @LastModifiedDate
-    protected LocalDate updated_at;
+    protected LocalDateTime updated_at;
 
     protected Boolean deleted = false;
 }

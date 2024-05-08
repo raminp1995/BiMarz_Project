@@ -46,12 +46,6 @@ public class OrderService extends BaseService<OrderEntity, OrderDto>
     }
 
     @Override
-    public ResponseEntity<OrderDto> getByModel(String model) throws ExceptionMassages
-    {
-        return super.getByModel(model);
-    }
-
-    @Override
     public ResponseEntity<List<OrderDto>> getAll() throws ExceptionMassages
     {
         if (userService.checkPermission(Abilities.GET_ORDER))

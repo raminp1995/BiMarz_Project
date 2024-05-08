@@ -9,10 +9,4 @@ import java.beans.Transient;
 @Repository
 public interface ICustomerRepository extends IBaseRepository<CustomerEntity>
 {
-    @Transient
-    @Override
-    default CustomerEntity findByModel(String model)
-    {
-        return null;
-    }
 }

@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 
 @Setter
@@ -19,9 +20,9 @@ public class BaseDto
     @JsonIgnore
     private Long id;
 
-    private LocalDate created_at;
+    private LocalDateTime created_at;
 
-    private LocalDate updated_at;
+    private LocalDateTime updated_at;
 
     private Boolean deleted = false;
 }

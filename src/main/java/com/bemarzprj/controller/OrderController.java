@@ -27,12 +27,6 @@ public class OrderController extends BaseController<OrderService, OrderDto>
         return super.getById(id);
     }
 
-    @Override
-    ResponseEntity<OrderDto> getByModel(String model) throws ExceptionMassages
-    {
-        return super.getByModel(model);
-    }
-
     @GetMapping("/getAll")
     @Override
     ResponseEntity<List<OrderDto>> getAll() throws ExceptionMassages

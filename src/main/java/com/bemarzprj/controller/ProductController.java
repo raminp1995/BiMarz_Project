@@ -3,6 +3,7 @@ package com.bemarzprj.controller;
 import com.bemarzprj.exception.ExceptionMassages;
 import com.bemarzprj.model.dto.ProductDto;
 import com.bemarzprj.service.IBaseService;
+import com.bemarzprj.service.ProductService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,9 +13,12 @@ import java.util.List;
 @RequestMapping("/products")
 public class ProductController extends BaseController<IBaseService<ProductDto>, ProductDto>
 {
-    protected ProductController(IBaseService<ProductDto> service)
+    private final ProductService productService;
+
+    protected ProductController(IBaseService<ProductDto> service, ProductService productService)
     {
         super(service);
+        this.productService = productService;
     }
 
     @GetMapping("/get/{id}")
@@ -24,11 +28,10 @@ public class ProductController extends BaseController<IBaseService<ProductDto>, 
         return super.getById(id);
     }
 
-    @GetMapping("/getByModel/{model}")
-    @Override
-    ResponseEntity<ProductDto> getByModel(@PathVariable String model) throws ExceptionMassages
+    @GetMapping("/findByModel/{model}")
+    ResponseEntity<ProductDto> findByModel(@PathVariable String model) throws ExceptionMassages
     {
-        return super.getByModel(model);
+        return productService.findByModel(model);
     }
 
     @GetMapping("/getAll")

@@ -13,7 +13,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ProductEntity extends BaseEntity
 {
-    private ProductType productType;
+    //private ProductType productType;
     private String model;
     private String size;
     private String color;

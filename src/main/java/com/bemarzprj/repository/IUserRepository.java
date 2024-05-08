@@ -9,18 +9,9 @@ import java.util.Optional;
 @Repository
 public interface IUserRepository extends IBaseRepository<UserEntity>
 {
-    @Transient
-    @Override
-    default UserEntity findByModel(String model)
-    {
-        return null;
-    }
-
     Optional<UserEntity> findByUsername(String username);
 
     boolean existsByUsername(String username);
-//    Boolean findUserAbilityBy(String ability);
 
-    //Boolean checkUserRole(String username);
 
 }

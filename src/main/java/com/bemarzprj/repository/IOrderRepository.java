@@ -9,12 +9,5 @@ import java.beans.Transient;
 @Repository
 public interface IOrderRepository extends IBaseRepository<OrderEntity>
 {
-    @Transient
-    @Override
-    default OrderEntity findByModel(String model)
-    {
-        return null;
-    }
-
 
 }

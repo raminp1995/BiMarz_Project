@@ -9,5 +9,5 @@ import java.util.List;
 @NoRepositoryBean
 public interface IBaseRepository<E extends BaseEntity> extends JpaRepository<E, Long>
 {
-    E findByModel(String model);
+
 }

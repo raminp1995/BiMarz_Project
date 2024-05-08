@@ -50,13 +50,6 @@ public class UserService extends BaseService<UserEntity, UserDto>
         }
     }
 
-    @Transient
-    @Override
-    public ResponseEntity<UserDto> getByModel(String model) throws ExceptionMassages
-    {
-        return super.getByModel(model);
-    }
-
     @Override
     public ResponseEntity<List<UserDto>> getAll() throws ExceptionMassages
     {
@@ -73,20 +66,19 @@ public class UserService extends BaseService<UserEntity, UserDto>
     @Override
     public ResponseEntity<UserDto> create(UserDto dto) throws ExceptionMassages
     {
-        UserDto user = new UserDto();
 
         if (checkPermission(Abilities.ADD_USER))
         {
             if (dto.getRoles().getFirst().getName().equals(RoleType.ADMIN))
             {
-                user = setAdminDefaultAbilities(dto);
+                setAdminDefaultAbilities(dto);
             }
             else if (dto.getRoles().getFirst().getName().equals(RoleType.USER))
             {
-                user = setUserDefaultAbilities(dto);
+                setUserDefaultAbilities(dto);
             }
             dto.setPassword(passwordEncoder.encode(dto.getPassword()));
-            return super.create(user);
+            return super.create(dto);
         }
         else
         {
@@ -97,20 +89,28 @@ public class UserService extends BaseService<UserEntity, UserDto>
     @Override
     public ResponseEntity<UserDto> update(UserDto dto) throws ExceptionMassages
     {
-        UserDto user = new UserDto();
 
         if (checkPermission(Abilities.EDIT_USER))
         {
-            if (dto.getRoles().getFirst().getName().equals(RoleType.ADMIN))
+            UserDto userDto = findUserByUsername(dto.getUsername()).getBody();
+            assert userDto != null;
+            dto.setId(userDto.getId());
+
+            if (dto.getUserAbilities().isEmpty())
             {
-                user = setAdminDefaultAbilities(dto);
+                dto.setUserAbilities(userDto.getUserAbilities());
             }
-            else if (dto.getRoles().getFirst().getName().equals(RoleType.USER))
+            if (dto.getRoles().isEmpty())
             {
-                user = setUserDefaultAbilities(dto);
+                dto.setRoles(userDto.getRoles());
             }
-            dto.setPassword(passwordEncoder.encode(dto.getPassword()));
-            return super.create(user);
+
+            if (dto.getPassword() != null)
+            {
+                dto.setPassword(passwordEncoder.encode(dto.getPassword()));
+            }
+            return super.update(dto);
+
         }
         else
         {
@@ -138,13 +138,8 @@ public class UserService extends BaseService<UserEntity, UserDto>
 
     }
 
-//    public UserDto findByUsername(UserDto user)
-//    {
-//        return userMapper.entityToDto(this.findByUsername(user.getUsername()));
-//    }
 
-
-    public UserDto setAdminDefaultAbilities(UserDto dto)
+    public void setAdminDefaultAbilities(UserDto dto)
     {
         Map<String, Boolean> userAbilities = new HashMap<>();
 //        userAbilities.put("ADD_ADMIN",true);
@@ -159,7 +154,7 @@ public class UserService extends BaseService<UserEntity, UserDto>
         userAbilities.put("EDIT_CUSTOMER", true);
         userAbilities.put("REMOVE_CUSTOMER", true);
         userAbilities.put("GET_CUSTOMER", true);
-        userAbilities.put("ADD_Product",true);
+        userAbilities.put("ADD_PRODUCT",true);
         userAbilities.put("EDIT_PRODUCT", true);
         userAbilities.put("REMOVE_PRODUCT", true);
         userAbilities.put("GET_PRODUCT", true);
@@ -169,10 +164,10 @@ public class UserService extends BaseService<UserEntity, UserDto>
         userAbilities.put("GET_ORDER", true);
 
         dto.setUserAbilities(userAbilities);
-        return dto;
+        //return dto;
     }
 
-    private UserDto setUserDefaultAbilities(UserDto dto)
+    private void setUserDefaultAbilities(UserDto dto)
     {
         Map<String, Boolean> userAbilities = new HashMap<>();
         userAbilities.put("ADD_CUSTOMER",true);
@@ -185,7 +180,7 @@ public class UserService extends BaseService<UserEntity, UserDto>
         userAbilities.put("GET_ORDER", true);
 
         dto.setUserAbilities(userAbilities);
-        return dto;
+        //return dto;
     }
 
     /*
@@ -210,5 +205,12 @@ public class UserService extends BaseService<UserEntity, UserDto>
     public boolean existsByUsername(String username)
     {
         return userRepository.existsByUsername(username);
+    }
+
+    public ResponseEntity<UserDto> findUserByUsername (String username)
+    {
+        return new ResponseEntity<>(userMapper.entityToDto(
+                        userRepository.findByUsername(username)
+                                .orElseThrow(() -> new NoSuchElementException("User not Found!"))), HttpStatus.OK);
     }
 }

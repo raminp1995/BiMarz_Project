@@ -30,7 +30,7 @@ public class CustomerService extends BaseService<CustomerEntity, CustomerDto>
 
         if (userService.checkPermission(Abilities.ADD_CUSTOMER))
         {
-            return super.update(dto);
+            return super.create(dto);
         }
         else
         {

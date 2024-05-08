@@ -22,11 +22,6 @@ public abstract class BaseController<S extends IBaseService<Dto>, Dto extends Ba
         return service.getById(id);
     }
 
-    ResponseEntity<Dto> getByModel(String model) throws ExceptionMassages
-    {
-        return service.getByModel(model);
-    }
-
     ResponseEntity<List<Dto>> getAll() throws ExceptionMassages
     {
         return service.getAll();

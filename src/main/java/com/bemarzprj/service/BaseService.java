@@ -11,15 +11,22 @@ import com.bemarzprj.repository.IBaseRepository;
 import com.bemarzprj.repository.IUserRepository;
 import com.bemarzprj.security.SecurityConstants;
 import com.sun.jdi.BooleanValue;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import java.beans.PropertyDescriptor;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 
 public class BaseService<E extends BaseEntity, Dto extends BaseDto> implements IBaseService<Dto>
@@ -39,13 +46,11 @@ public class BaseService<E extends BaseEntity, Dto extends BaseDto> implements I
     {
         Dto dto = baseMapper.entityToDto(baseRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("No Data Founded!")));
-        return new ResponseEntity<>(dto, HttpStatus.OK);
-    }
 
-    @Override
-    public ResponseEntity<Dto> getByModel(String model) throws ExceptionMassages
-    {
-        Dto dto = baseMapper.entityToDto(baseRepository.findByModel(model));
+        if (dto.getDeleted())
+        {
+            throw new ExceptionMassages("Item not found!");
+        }
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
@@ -59,7 +64,7 @@ public class BaseService<E extends BaseEntity, Dto extends BaseDto> implements I
     @Override
     public ResponseEntity<Dto> create(Dto dto) throws ExceptionMassages
     {
-        dto.setCreated_at(LocalDate.now());
+        dto.setCreated_at(LocalDateTime.now());
         Dto resultDto = baseMapper.entityToDto(baseRepository.save(baseMapper.dtoToEntity(dto)));
         return new ResponseEntity<>(resultDto, HttpStatus.OK);
     }
@@ -67,9 +72,14 @@ public class BaseService<E extends BaseEntity, Dto extends BaseDto> implements I
     @Override
     public ResponseEntity<Dto> update(Dto dto) throws ExceptionMassages
     {
-        dto.setUpdated_at(LocalDate.now());
-        Dto resultDto = baseMapper.entityToDto(baseRepository.save(baseMapper.dtoToEntity(dto)));
-        return new ResponseEntity<>(resultDto, HttpStatus.OK);
+        E entity = baseRepository.findById(dto.getId()).orElseThrow(() -> new NoSuchElementException("Not found!"));
+        entity.setUpdated_at(LocalDateTime.now());
+        if (!entity.getDeleted())
+        {
+            copyNonNullProperties(dto, entity);
+            return new ResponseEntity<>(baseMapper.entityToDto(baseRepository.save(entity)), HttpStatus.OK);
+        }
+        return null;
     }
 
     @Override
@@ -88,5 +98,30 @@ public class BaseService<E extends BaseEntity, Dto extends BaseDto> implements I
             System.out.println("Your information successfully deleted!");
             return new ResponseEntity<>(HttpStatus.OK);
         }
+    }
+
+
+    public static void copyNonNullProperties(Object source, Object target)
+    {
+        BeanUtils.copyProperties(source, target, getNullPropertyName(source));
+    }
+
+    public static String[] getNullPropertyName(Object source)
+    {
+        final BeanWrapper src = new BeanWrapperImpl(source);
+        PropertyDescriptor[] pds = src.getPropertyDescriptors();
+
+        Set<String> emptyNames = new HashSet<>();
+        for (PropertyDescriptor pd : pds)
+        {
+            Object srcValue = src.getPropertyValue(pd.getName());
+            if (srcValue == null)
+            {
+                emptyNames.add(pd.getName());
+            }
+        }
+
+        String[] result = new String[emptyNames.size()];
+        return emptyNames.toArray(result);
     }
 }
