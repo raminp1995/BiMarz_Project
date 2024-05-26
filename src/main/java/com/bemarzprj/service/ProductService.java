@@ -20,7 +20,6 @@ import java.util.Objects;
 public class ProductService extends BaseService<ProductEntity, ProductDto>
 {
     private final UserService userService;
-
     private final IProductRepository productRepository;
     private final IProductMapper productMapper;
 

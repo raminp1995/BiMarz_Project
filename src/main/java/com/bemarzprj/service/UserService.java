@@ -67,9 +67,13 @@ public class UserService extends BaseService<UserEntity, UserDto>
     public ResponseEntity<UserDto> create(UserDto dto) throws ExceptionMassages
     {
 
-        if (checkPermission(Abilities.ADD_USER))
-        {
-            if (dto.getRoles().getFirst().getName().equals(RoleType.ADMIN))
+//        if (checkPermission(Abilities.ADD_USER))
+//        {
+            if (dto.getRoles().getFirst().getName().equals(RoleType.OWNER))
+            {
+                setOwnerDefaultAbilities(dto);
+            }
+            else if (dto.getRoles().getFirst().getName().equals(RoleType.ADMIN))
             {
                 setAdminDefaultAbilities(dto);
             }
@@ -77,13 +81,13 @@ public class UserService extends BaseService<UserEntity, UserDto>
             {
                 setUserDefaultAbilities(dto);
             }
-            dto.setPassword(passwordEncoder.encode(dto.getPassword()));
+//            dto.setPassword(passwordEncoder.encode(dto.getPassword()));
             return super.create(dto);
-        }
-        else
-        {
-            throw new ExceptionMassages("You can not operate this action");
-        }
+//        }
+//        else
+//        {
+//            throw new ExceptionMassages("You can not operate this action");
+//        }
     }
 
     @Override
@@ -100,15 +104,33 @@ public class UserService extends BaseService<UserEntity, UserDto>
             {
                 dto.setUserAbilities(userDto.getUserAbilities());
             }
+
             if (dto.getRoles().isEmpty())
             {
                 dto.setRoles(userDto.getRoles());
+            }
+            else
+            {
+                if (dto.getRoles().getFirst().getName().equals(RoleType.OWNER))
+                {
+                    setOwnerDefaultAbilities(dto);
+                }
+                else if (dto.getRoles().getFirst().getName().equals(RoleType.ADMIN))
+                {
+                    setAdminDefaultAbilities(dto);
+                }
+                else if (dto.getRoles().getFirst().getName().equals(RoleType.USER))
+                {
+                    setUserDefaultAbilities(dto);
+                }
             }
 
             if (dto.getPassword() != null)
             {
                 dto.setPassword(passwordEncoder.encode(dto.getPassword()));
             }
+
+
             return super.update(dto);
 
         }
@@ -139,6 +161,33 @@ public class UserService extends BaseService<UserEntity, UserDto>
     }
 
 
+    public void setOwnerDefaultAbilities(UserDto dto)
+    {
+        Map<String, Boolean> userAbilities = new HashMap<>();
+        userAbilities.put("ADD_ADMIN",true);
+        userAbilities.put("EDIT_ADMIN", true);
+        userAbilities.put("REMOVE_ADMIN", true);
+        userAbilities.put("GET_ADMIN", true);
+        userAbilities.put("ADD_USER",true);
+        userAbilities.put("EDIT_USER", true);
+        userAbilities.put("REMOVE_USER", true);
+        userAbilities.put("GET_USER", true);
+        userAbilities.put("ADD_CUSTOMER",true);
+        userAbilities.put("EDIT_CUSTOMER", true);
+        userAbilities.put("REMOVE_CUSTOMER", true);
+        userAbilities.put("GET_CUSTOMER", true);
+        userAbilities.put("ADD_PRODUCT",true);
+        userAbilities.put("EDIT_PRODUCT", true);
+        userAbilities.put("REMOVE_PRODUCT", true);
+        userAbilities.put("GET_PRODUCT", true);
+        userAbilities.put("ADD_ORDER",true);
+        userAbilities.put("EDIT_ORDER", true);
+        userAbilities.put("REMOVE_ORDER", true);
+        userAbilities.put("GET_ORDER", true);
+
+        dto.setUserAbilities(userAbilities);
+        //return dto;
+    }
     public void setAdminDefaultAbilities(UserDto dto)
     {
         Map<String, Boolean> userAbilities = new HashMap<>();

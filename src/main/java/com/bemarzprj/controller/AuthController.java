@@ -52,25 +52,25 @@ public class AuthController
         this.jwtGenerator = jwtGenerator;
     }
 
-//    @PostMapping("/register")
-//    public ResponseEntity<String> register(@RequestBody RegisterDto registerDto) throws ExceptionMassages
-//    {
-//        if(userRepository.existsByUsername(registerDto.getUsername()))
-//        {
-//            return new ResponseEntity<>("Username is taken!!", HttpStatus.BAD_REQUEST);
-//        }
-//
-//        UserEntity user = new UserEntity();
-//        user.setUsername(registerDto.getUsername());
-//        user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
-//
-//        Role roles = roleRepository.findByName("USER").get();
-//        user.setRoles(Collections.singletonList(roles));
-//        userService.setAdminDefaultAbilities(userMapper.entityToDto(user));
-//        userService.create(userMapper.entityToDto(user));
-//
-//        return new ResponseEntity<>("User Registration was Successfully", HttpStatus.OK);
-//    }
+    @PostMapping("/register")
+    public ResponseEntity<String> register(@RequestBody RegisterDto registerDto) throws ExceptionMassages
+    {
+        if(userRepository.existsByUsername(registerDto.getUsername()))
+        {
+            return new ResponseEntity<>("Username is taken!!", HttpStatus.BAD_REQUEST);
+        }
+
+        UserEntity user = new UserEntity();
+        user.setUsername(registerDto.getUsername());
+        user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
+
+        Role roles = roleRepository.findByName("OWNER").get();
+        user.setRoles(Collections.singletonList(roles));
+        userService.setAdminDefaultAbilities(userMapper.entityToDto(user));
+        userService.create(userMapper.entityToDto(user));
+
+        return new ResponseEntity<>("User Registration was Successfully", HttpStatus.OK);
+    }
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponseDto> login(@RequestBody LoginDto loginDto)
