@@ -84,21 +84,21 @@ public class UserService extends BaseService<UserEntity, UserDto>
     @Override
     public ResponseEntity<UserDto> create(UserDto dto) throws ExceptionMassages
     {
-        String check = "";
+        String ability = "";
 
         if (dto.getRoles().getFirst().getName().equals(RoleType.OWNER))
         {
-            check = Abilities.ADD_OWNER;
+            ability = Abilities.ADD_OWNER;
         }
         else if (dto.getRoles().getFirst().getName().equals(RoleType.ADMIN))
         {
-            check = Abilities.ADD_ADMIN;
+            ability = Abilities.ADD_ADMIN;
         }
         else if (dto.getRoles().getFirst().getName().equals(RoleType.USER))
         {
-            check = Abilities.ADD_USER;
+            ability = Abilities.ADD_USER;
         }
-        if (checkPermission(check))
+        if (checkPermission(ability))
         {
             if (dto.getRoles().getFirst().getName().equals(RoleType.OWNER))
             {
@@ -125,7 +125,21 @@ public class UserService extends BaseService<UserEntity, UserDto>
     public ResponseEntity<UserDto> update(UserDto dto) throws ExceptionMassages
     {
 
-        if (checkPermission(Abilities.EDIT_USER))
+        String ability = "";
+
+        if (dto.getRoles().getFirst().getName().equals(RoleType.OWNER))
+        {
+            ability = Abilities.EDIT_OWNER;
+        }
+        else if (dto.getRoles().getFirst().getName().equals(RoleType.ADMIN))
+        {
+            ability = Abilities.EDIT_ADMIN;
+        }
+        else if (dto.getRoles().getFirst().getName().equals(RoleType.USER))
+        {
+            ability = Abilities.EDIT_USER;
+        }
+        if (checkPermission(ability))
         {
             UserDto userDto = findUserByUsername(dto.getUsername()).getBody();
             assert userDto != null;
@@ -211,6 +225,10 @@ public class UserService extends BaseService<UserEntity, UserDto>
     public void setOwnerDefaultAbilities(UserDto dto)
     {
         Map<String, Boolean> userAbilities = new HashMap<>();
+        userAbilities.put("ADD_OWNER",false);
+        userAbilities.put("EDIT_OWNER", false);
+        userAbilities.put("REMOVE_OWNER", false);
+        userAbilities.put("GET_OWNER", true);
         userAbilities.put("ADD_ADMIN",true);
         userAbilities.put("EDIT_ADMIN", true);
         userAbilities.put("REMOVE_ADMIN", true);
@@ -238,9 +256,13 @@ public class UserService extends BaseService<UserEntity, UserDto>
     public void setAdminDefaultAbilities(UserDto dto)
     {
         Map<String, Boolean> userAbilities = new HashMap<>();
-//        userAbilities.put("ADD_ADMIN",true);
-        userAbilities.put("EDIT_ADMIN", true);
-        userAbilities.put("REMOVE_ADMIN", true);
+        userAbilities.put("ADD_OWNER",false);
+        userAbilities.put("EDIT_OWNER", false);
+        userAbilities.put("REMOVE_OWNER", false);
+        userAbilities.put("GET_OWNER", false);
+        userAbilities.put("ADD_ADMIN",false);
+        userAbilities.put("EDIT_ADMIN", false);
+        userAbilities.put("REMOVE_ADMIN", false);
         userAbilities.put("GET_ADMIN", true);
         userAbilities.put("ADD_USER",true);
         userAbilities.put("EDIT_USER", true);
@@ -266,6 +288,18 @@ public class UserService extends BaseService<UserEntity, UserDto>
     private void setUserDefaultAbilities(UserDto dto)
     {
         Map<String, Boolean> userAbilities = new HashMap<>();
+        userAbilities.put("ADD_OWNER",false);
+        userAbilities.put("EDIT_OWNER", false);
+        userAbilities.put("REMOVE_OWNER", false);
+        userAbilities.put("GET_OWNER", false);
+        userAbilities.put("ADD_ADMIN",false);
+        userAbilities.put("EDIT_ADMIN", false);
+        userAbilities.put("REMOVE_ADMIN", false);
+        userAbilities.put("GET_ADMIN", false);
+        userAbilities.put("ADD_USER",false);
+        userAbilities.put("EDIT_USER", false);
+        userAbilities.put("REMOVE_USER", false);
+        userAbilities.put("GET_USER", true);
         userAbilities.put("ADD_CUSTOMER",true);
         userAbilities.put("EDIT_CUSTOMER", true);
         userAbilities.put("GET_CUSTOMER", true);
