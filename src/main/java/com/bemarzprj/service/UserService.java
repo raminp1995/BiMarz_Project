@@ -40,9 +40,26 @@ public class UserService extends BaseService<UserEntity, UserDto>
     @Override
     public ResponseEntity<UserDto> getById(Long id) throws ExceptionMassages
     {
-        if (checkPermission(Abilities.GET_USER))
+        UserEntity user = userRepository.findById(id).orElseThrow(() -> new NoSuchElementException("No User"));
+        String role = user.getRoles().getFirst().getName();
+        String action = "";
+
+        if (role.equals(RoleType.OWNER))
         {
-            return super.getById(id);
+            action = Abilities.REMOVE_OWNER;
+        }
+        else if (role.equals(RoleType.ADMIN))
+        {
+            action = Abilities.REMOVE_ADMIN;
+        }
+        else if (role.equals(RoleType.USER))
+        {
+            action = Abilities.REMOVE_USER;
+        }
+        if (checkPermission(action))
+        {
+            super.delete(id);
+            return new ResponseEntity<>(HttpStatus.OK);
         }
         else
         {
@@ -53,6 +70,7 @@ public class UserService extends BaseService<UserEntity, UserDto>
     @Override
     public ResponseEntity<List<UserDto>> getAll() throws ExceptionMassages
     {
+
         if (checkPermission(Abilities.GET_USER))
         {
             return super.getAll();
@@ -66,9 +84,22 @@ public class UserService extends BaseService<UserEntity, UserDto>
     @Override
     public ResponseEntity<UserDto> create(UserDto dto) throws ExceptionMassages
     {
+        String check = "";
 
-//        if (checkPermission(Abilities.ADD_USER))
-//        {
+        if (dto.getRoles().getFirst().getName().equals(RoleType.OWNER))
+        {
+            check = Abilities.ADD_OWNER;
+        }
+        else if (dto.getRoles().getFirst().getName().equals(RoleType.ADMIN))
+        {
+            check = Abilities.ADD_ADMIN;
+        }
+        else if (dto.getRoles().getFirst().getName().equals(RoleType.USER))
+        {
+            check = Abilities.ADD_USER;
+        }
+        if (checkPermission(check))
+        {
             if (dto.getRoles().getFirst().getName().equals(RoleType.OWNER))
             {
                 setOwnerDefaultAbilities(dto);
@@ -81,13 +112,13 @@ public class UserService extends BaseService<UserEntity, UserDto>
             {
                 setUserDefaultAbilities(dto);
             }
-//            dto.setPassword(passwordEncoder.encode(dto.getPassword()));
+            dto.setPassword(passwordEncoder.encode(dto.getPassword()));
             return super.create(dto);
-//        }
-//        else
-//        {
-//            throw new ExceptionMassages("You can not operate this action");
-//        }
+        }
+        else
+        {
+            throw new ExceptionMassages("You can not operate this action");
+        }
     }
 
     @Override
@@ -143,7 +174,23 @@ public class UserService extends BaseService<UserEntity, UserDto>
     @Override
     public ResponseEntity<Void> delete(Long id) throws ExceptionMassages
     {
-        if (checkPermission(Abilities.REMOVE_USER))
+        UserEntity user = userRepository.findById(id).orElseThrow(() -> new NoSuchElementException("No User"));
+        String role = user.getRoles().getFirst().getName();
+        String action = "";
+
+        if (role.equals(RoleType.OWNER))
+        {
+            action = Abilities.REMOVE_OWNER;
+        }
+        else if (role.equals(RoleType.ADMIN))
+        {
+            action = Abilities.REMOVE_ADMIN;
+        }
+        else if (role.equals(RoleType.USER))
+        {
+            action = Abilities.REMOVE_USER;
+        }
+        if (checkPermission(action))
         {
             super.delete(id);
             return new ResponseEntity<>(HttpStatus.OK);
@@ -250,6 +297,7 @@ public class UserService extends BaseService<UserEntity, UserDto>
         }
         return false;
     }
+
 
     public boolean existsByUsername(String username)
     {
