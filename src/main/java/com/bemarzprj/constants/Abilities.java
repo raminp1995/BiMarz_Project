@@ -4,10 +4,10 @@ import java.util.Set;
 
 public class Abilities
 {
-    public static String ADD_OWNER = "ADD_ADMIN";
-    public static String EDIT_OWNER = "EDIT_ADMIN";
-    public static String REMOVE_OWNER = "REMOVE_ADMIN";
-    public static String GET_OWNER = "GET_ADMIN";
+    public static String ADD_OWNER = "ADD_OWNER";
+    public static String EDIT_OWNER = "EDIT_OWNER";
+    public static String REMOVE_OWNER = "REMOVE_OWNER";
+    public static String GET_OWNER = "GET_OWNER";
     public static String ADD_ADMIN = "ADD_ADMIN";
     public static String EDIT_ADMIN = "EDIT_ADMIN";
     public static String REMOVE_ADMIN = "REMOVE_ADMIN";

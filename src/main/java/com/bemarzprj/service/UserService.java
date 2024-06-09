@@ -42,20 +42,14 @@ public class UserService extends BaseService<UserEntity, UserDto>
     {
         UserEntity user = userRepository.findById(id).orElseThrow(() -> new NoSuchElementException("No User"));
         String role = user.getRoles().getFirst().getName();
-        String action = "";
+        String action = switch (role)
+        {
+            case RoleType.OWNER -> Abilities.REMOVE_OWNER;
+            case RoleType.ADMIN -> Abilities.REMOVE_ADMIN;
+            case RoleType.USER -> Abilities.REMOVE_USER;
+            default -> "";
+        };
 
-        if (role.equals(RoleType.OWNER))
-        {
-            action = Abilities.REMOVE_OWNER;
-        }
-        else if (role.equals(RoleType.ADMIN))
-        {
-            action = Abilities.REMOVE_ADMIN;
-        }
-        else if (role.equals(RoleType.USER))
-        {
-            action = Abilities.REMOVE_USER;
-        }
         if (checkPermission(action))
         {
             super.delete(id);
@@ -112,6 +106,10 @@ public class UserService extends BaseService<UserEntity, UserDto>
             {
                 setUserDefaultAbilities(dto);
             }
+            else if (dto.getRoles().isEmpty())
+            {
+                throw new ExceptionMassages("User Most have a role!");
+            }
             dto.setPassword(passwordEncoder.encode(dto.getPassword()));
             return super.create(dto);
         }
@@ -167,6 +165,9 @@ public class UserService extends BaseService<UserEntity, UserDto>
                 else if (dto.getRoles().getFirst().getName().equals(RoleType.USER))
                 {
                     setUserDefaultAbilities(dto);
+                } else if (dto.getRoles().isEmpty())
+                {
+                    throw new ExceptionMassages("You can not operate this action");
                 }
             }
 
@@ -190,20 +191,14 @@ public class UserService extends BaseService<UserEntity, UserDto>
     {
         UserEntity user = userRepository.findById(id).orElseThrow(() -> new NoSuchElementException("No User"));
         String role = user.getRoles().getFirst().getName();
-        String action = "";
+        String action = switch (role)
+        {
+            case RoleType.OWNER -> Abilities.REMOVE_OWNER;
+            case RoleType.ADMIN -> Abilities.REMOVE_ADMIN;
+            case RoleType.USER -> Abilities.REMOVE_USER;
+            default -> "";
+        };
 
-        if (role.equals(RoleType.OWNER))
-        {
-            action = Abilities.REMOVE_OWNER;
-        }
-        else if (role.equals(RoleType.ADMIN))
-        {
-            action = Abilities.REMOVE_ADMIN;
-        }
-        else if (role.equals(RoleType.USER))
-        {
-            action = Abilities.REMOVE_USER;
-        }
         if (checkPermission(action))
         {
             super.delete(id);

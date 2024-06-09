@@ -1,6 +1,7 @@
 package com.bemarzprj.model.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,9 +19,9 @@ public class PersonEntity extends BaseEntity
     private String firstName;
     @Column
     private String lastName;
-    @Column
+    @Column(unique = true, nullable = false)
     private String username;
-    @Column
+    @Column(nullable = false)
     private String password;
     @Column
     private String phone;

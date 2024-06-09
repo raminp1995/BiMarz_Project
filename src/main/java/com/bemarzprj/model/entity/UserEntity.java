@@ -1,6 +1,7 @@
 package com.bemarzprj.model.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,6 +30,7 @@ public class UserEntity extends PersonEntity
     private Map<String, Boolean> userAbilities = new HashMap<>();
 
     @Column(unique = true, nullable = false)
+    @NotNull
     private String username;
 
     @Column(nullable = false)
