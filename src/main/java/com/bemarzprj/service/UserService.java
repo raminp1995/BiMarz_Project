@@ -17,7 +17,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.beans.Transient;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,16 +43,15 @@ public class UserService extends BaseService<UserEntity, UserDto>
         String role = user.getRoles().getFirst().getName();
         String action = switch (role)
         {
-            case RoleType.OWNER -> Abilities.REMOVE_OWNER;
-            case RoleType.ADMIN -> Abilities.REMOVE_ADMIN;
-            case RoleType.USER -> Abilities.REMOVE_USER;
+            case RoleType.OWNER -> Abilities.GET_OWNER;
+            case RoleType.ADMIN -> Abilities.GET_ADMIN;
+            case RoleType.USER -> Abilities.GET_USER;
             default -> "";
         };
 
         if (checkPermission(action))
         {
-            super.delete(id);
-            return new ResponseEntity<>(HttpStatus.OK);
+            return super.getById(id);
         }
         else
         {

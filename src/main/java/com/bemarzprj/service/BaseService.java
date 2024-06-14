@@ -1,27 +1,17 @@
 package com.bemarzprj.service;
 
-import com.bemarzprj.constants.RoleType;
 import com.bemarzprj.exception.ExceptionMassages;
 import com.bemarzprj.mapper.IBaseMapper;
 import com.bemarzprj.model.dto.BaseDto;
 import com.bemarzprj.model.entity.BaseEntity;
-import com.bemarzprj.model.entity.Role;
-import com.bemarzprj.model.entity.UserEntity;
 import com.bemarzprj.repository.IBaseRepository;
-import com.bemarzprj.repository.IUserRepository;
-import com.bemarzprj.security.SecurityConstants;
-import com.sun.jdi.BooleanValue;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.Nullable;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.beans.PropertyDescriptor;
-import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
