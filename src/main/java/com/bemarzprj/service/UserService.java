@@ -17,10 +17,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 @Service
 public class UserService extends BaseService<UserEntity, UserDto>
@@ -63,15 +60,46 @@ public class UserService extends BaseService<UserEntity, UserDto>
     public ResponseEntity<List<UserDto>> getAll() throws ExceptionMassages
     {
 
-        if (checkPermission(Abilities.GET_USER))
+        if (getLoggedUserRole().getName().equals(RoleType.OWNER))
         {
             return super.getAll();
+        }
+        else if (getLoggedUserRole().getName().equals(RoleType.ADMIN))
+        {
+            if (checkPermission(Abilities.GET_ADMIN))
+            {
+                return new ResponseEntity<>(
+                        Objects.requireNonNull(super.getAll().getBody()).stream()
+                                .filter(i -> i.getRoles().getFirst().getName().equals(RoleType.ADMIN)
+                                        || i.getRoles().getFirst().getName().equals(RoleType.USER)).toList()
+                        , HttpStatus.OK);
+            }
+            else
+            {
+                throw new ExceptionMassages("You can not operate this action");
+            }
+        }
+        else if (getLoggedUserRole().getName().equals(RoleType.USER))
+        {
+            if (checkPermission(Abilities.GET_USER))
+            {
+                return new ResponseEntity<>(
+                        Objects.requireNonNull(super.getAll().getBody()).stream()
+                                .filter(i -> i.getRoles().getFirst().getName().equals(RoleType.USER)).toList()
+                        , HttpStatus.OK);
+            }
+            else
+            {
+                throw new ExceptionMassages("You can not operate this action");
+            }
         }
         else
         {
             throw new ExceptionMassages("You can not operate this action");
         }
+
     }
+
 
     @Override
     public ResponseEntity<UserDto> create(UserDto dto) throws ExceptionMassages
@@ -307,7 +335,7 @@ public class UserService extends BaseService<UserEntity, UserDto>
     }
 
     /*
-    This method checks the Permission of a user
+    This method checks the Permissions of a user
  */
     public Boolean checkPermission(String ability)
     {
@@ -323,6 +351,15 @@ public class UserService extends BaseService<UserEntity, UserDto>
             return user.getUserAbilities().get(ability);
         }
         return false;
+    }
+
+    private Role getLoggedUserRole()
+    {
+        String username = SecurityConstants.getAuth().getName();
+        UserEntity user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User Not Found!"));
+
+        return user.getRoles().getFirst();
     }
 
 

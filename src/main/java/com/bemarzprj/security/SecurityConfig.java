@@ -20,7 +20,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class SecurityConfig
 {
     private final JwtAuthEntryPoint entryPoint;
-    private CustomUserDetailService customUserDetailService;
+    private final CustomUserDetailService customUserDetailService;
 
         public SecurityConfig(JwtAuthEntryPoint entryPoint, CustomUserDetailService customUserDetailService)
     {
@@ -37,6 +37,7 @@ public class SecurityConfig
                 .authorizeHttpRequests((requests -> requests
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/users/**").permitAll()
+                        .requestMatchers("/testing_user/**").permitAll()
                         .anyRequest().authenticated())).httpBasic(withDefaults());
 
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);

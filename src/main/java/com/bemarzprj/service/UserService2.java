@@ -1,7 +1,6 @@
 package com.bemarzprj.service;
 
 import com.bemarzprj.exception.ExceptionMassages;
-import com.bemarzprj.mapper.IBaseMapper;
 import com.bemarzprj.mapper.IUserMapper;
 import com.bemarzprj.model.dto.UserDto;
 import com.bemarzprj.model.entity.UserEntity;
@@ -12,7 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class UserService2 extends BaseService2
+public class UserService2 extends BaseService2 implements IBaseService2
 {
 
 
